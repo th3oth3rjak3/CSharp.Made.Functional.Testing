@@ -1,9 +1,7 @@
 ﻿
 using FluentAssertions;
 
-using Functional;
-
-namespace CSharp.Made.Functional.Testing;
+namespace Functional.Testing;
 public static partial class Prelude
 {
     /// <summary>

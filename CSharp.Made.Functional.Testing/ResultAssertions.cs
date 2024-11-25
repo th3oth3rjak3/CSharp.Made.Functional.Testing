@@ -1,8 +1,6 @@
-﻿namespace Functional.Testing;
+﻿using FluentAssertions;
 
-using System;
-
-using FluentAssertions;
+namespace Functional.Testing;
 
 public static partial class Prelude
 {
