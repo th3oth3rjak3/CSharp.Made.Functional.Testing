@@ -7,26 +7,39 @@ using FluentAssertions;
 public static partial class Prelude
 {
     /// <summary>
+    /// Assert that a result is an Ok variant.
+    /// </summary>
+    /// <typeparam name="Ok">The type when ok.</typeparam>
+    /// <typeparam name="Error">The type when error.</typeparam>
+    /// <param name="result">The result to assert.</param>
+    /// <param name="because">A testing message that indicates why the assertion is expected.</param>
+    /// <returns>The unwrapped value for method chaining.</returns>
+    public static Ok AssertOk<Ok, Error>(this Result<Ok, Error> result, string? because = null) =>
+        result
+            .Tap(r =>
+                r.IsOk
+                .Should()
+                .BeTrue(because ?? "the result was expected to be Ok."))
+            .Unwrap();
+
+    /// <summary>
+    /// Assert that a result is an Error variant.
+    /// </summary>
+    /// <typeparam name="Ok">The type when ok.</typeparam>
+    /// <typeparam name="Error">The type when error.</typeparam>
+    /// <param name="result">The result to assert.</param>
+    /// <param name="because">A testing message that indicates why the assertion is expected.</param>
+    /// <returns>The unwrapped error for method chaining.</returns>
+    public static Error AssertError<Ok, Error>(this Result<Ok, Error> result, string? because = null) =>
+        result
+            .Tap(r =>
+                r.IsError
+                .Should()
+                .BeTrue(because ?? "the result was expected to be an Error."))
+            .UnwrapError();
+
+    /// <summary>
     /// Assert that the result is an Ok variant, and that the predicate provided will return true.
-    /// <example><br /><br/>
-    /// Example:
-    /// <code>
-    ///     // An Ok variant with the inner value 1.
-    ///     var okValue = new Result&lt;int, string&gt;(1);
-    ///     
-    ///     // This won't throw because the value actually equals 1 and is Ok.
-    ///     okValue.AssertTrue_WhenOk(v => v == 1);
-    ///     
-    ///     // This will throw an exception because the value doesn't equal 2 causing the test to fail.
-    ///     okValue.AssertTrue_WhenOk(v => v == 2);
-    ///     
-    ///     // This is an error variant.
-    ///     var error = new Result&lt;int, string&gt;("an error message");
-    ///
-    ///     // This will throw because it's not Ok causing a test to fail.
-    ///     error.AssertTrue_WhenOk(v => v == 1);
-    /// </code>
-    /// </example>
     /// </summary>
     /// <typeparam name="Ok">The Ok type.</typeparam>
     /// <typeparam name="Error">The Error type.</typeparam>

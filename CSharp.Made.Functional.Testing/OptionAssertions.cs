@@ -1,32 +1,38 @@
-﻿namespace Functional.Testing;
+﻿using FluentAssertions;
 
-using FluentAssertions;
+using static Functional.Prelude;
+
+namespace Functional.Testing;
 
 public static partial class Prelude
 {
-    public static void AssertTrue_WhenSome<T>(this Option<T> option, Func<T, bool> predicate, string? because = null)
-    {
-        var someValue = option.Unwrap();
-
-        predicate(someValue)
-            .Should()
-            .BeTrue(because ?? "the predicate was expected to be true");
-    }
-
-    public static void AssertFalse_WhenSome<T>(this Option<T> option, Func<T, bool> predicate, string? because = null)
-    {
-        var someValue = option.Unwrap();
-
-        predicate(someValue)
-            .Should()
-            .BeFalse(because ?? "the predicate was expected to be false");
-    }
-
-    public static void AssertNone<T>(this Option<T> option, string? because = null)
-    {
+    /// <summary>
+    /// Assert that an option is a Some variant.
+    /// </summary>
+    /// <typeparam name="T">The inner type of the option.</typeparam>
+    /// <param name="option">The option to check for a Some variant.</param>
+    /// <param name="because">A testing message that indicates why the assertion is expected.</param>
+    /// <returns>The original option for method chaining.</returns>
+    public static T AssertSome<T>(this Option<T> option, string? because = null) =>
         option
-            .IsNone
-            .Should()
-            .BeTrue(because ?? "the option was expected to be None");
-    }
+            .Tap(o =>
+                o.IsSome
+                .Should()
+                .BeTrue(because ?? "the option was expected to be Some."))
+            .Unwrap();
+
+    /// <summary>
+    /// Assert that an option is a None variant.
+    /// </summary>
+    /// <typeparam name="T">The inner type of the option.</typeparam>
+    /// <param name="option">The option to check for a None variant.</param>
+    /// <param name="because">A testing message that indicates why the assertion is expected.</param>
+    /// <returns>The original option for method chaining.</returns>
+    public static Unit AssertNone<T>(this Option<T> option, string? because = null) =>
+        option
+            .Tap(o =>
+                o.IsNone
+                .Should()
+                .BeTrue(because ?? "the option was expected to be None."))
+            .Pipe(() => Unit());
 }

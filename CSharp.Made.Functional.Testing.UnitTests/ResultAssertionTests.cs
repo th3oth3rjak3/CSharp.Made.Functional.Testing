@@ -1,11 +1,47 @@
 namespace Functional.Testing.UnitTests;
 
-using FluentAssertions;
-
-using Xunit.Sdk;
-
-public class ResultAssertions
+public class ResultAssertionTests
 {
+    [Fact]
+    public void AssertOk_WhenOk_ShouldPass()
+    {
+        Result<int, string> value = 1;
+        value
+            .AssertOk()
+            .Should()
+            .Be(1);
+    }
+
+    [Fact]
+    public void AssertOk_WhenError_ShouldFail()
+    {
+        Result<int, string> value = "error";
+        value
+            .Invoking(v => v.AssertOk())
+            .Should()
+            .Throw<XunitException>();
+    }
+
+    [Fact]
+    public void AssertError_WhenError_ShouldPass()
+    {
+        Result<int, string> value = "error";
+        value
+            .AssertError()
+            .Should()
+            .Be("error");
+    }
+
+    [Fact]
+    public void AssertError_WhenOk_ShouldFail()
+    {
+        Result<int, string> value = 1;
+        value
+            .Invoking(v => v.AssertError())
+            .Should()
+            .Throw<XunitException>();
+    }
+
     [Fact]
     public void AssertTrue_WhenOk_ShouldBeTrue_WhenPredicateIsTrue()
     {
