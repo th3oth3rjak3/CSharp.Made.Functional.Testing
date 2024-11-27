@@ -1,4 +1,5 @@
 ﻿namespace CSharp.Made.Functional.Testing.UnitTests;
+
 public class GenericAssertionTests
 {
     internal class TestModel
@@ -192,6 +193,30 @@ public class GenericAssertionTests
     }
 
     [Fact]
+    public void AssertEqual_UsingSelector_ShouldPass_WhenObjectsAreEqual()
+    {
+        var value1 = new TestModel { Message = "test message", Value = 1 };
+
+        value1
+            .AssertEqual(v => v.Message, "test message")
+            .Should()
+            .Be(value1);
+    }
+
+
+    [Fact]
+    public void AssertEqual_UsingSelector_ShouldFail_WhenObjectsAreNotEqual()
+    {
+        var value1 = new TestModel { Message = "test message", Value = 1 };
+
+
+        value1
+            .Invoking(v => v.AssertEqual(v => v.Message, "wrong message"))
+            .Should()
+            .Throw<XunitException>();
+    }
+
+    [Fact]
     public async Task AssertEqualAsync_ShouldPass_WhenObjectsAreEqual()
     {
         var value1 = new { Random = "something random" };
@@ -216,6 +241,29 @@ public class GenericAssertionTests
     }
 
     [Fact]
+    public async Task AssertEqualAsync_UsingSelector_ShouldPass_WhenObjectsAreEqual()
+    {
+        var value1 = new TestModel { Message = "test message", Value = 1 };
+
+        (await value1
+            .Async()
+            .AssertEqualAsync(v => v.Message, "test message"))
+            .Should()
+            .Be(value1);
+    }
+
+    [Fact]
+    public async Task AssertEqualAsync_UsingSelector_ShouldFail_WhenObjectsAreNotEqual()
+    {
+        var value1 = new TestModel { Message = "test message", Value = 1 };
+
+        await value1
+            .Invoking(v => v.Async().AssertEqualAsync(v => v.Message, "wrong message"))
+            .Should()
+            .ThrowAsync<XunitException>();
+    }
+
+    [Fact]
     public void AssertNotEqual_ShouldPass_WhenObjectsAreNotEqual()
     {
         var value1 = new object();
@@ -234,6 +282,28 @@ public class GenericAssertionTests
 
         value1
             .Invoking(v => v.AssertNotEqual(value1))
+            .Should()
+            .Throw<XunitException>();
+    }
+
+    [Fact]
+    public void AssertNotEqual_UsingSelector_ShouldPass_WhenObjectsAreNotEqual()
+    {
+        var value1 = new TestModel { Message = "test message", Value = 1 };
+
+        value1
+            .AssertNotEqual(v => v.Message, "not equal message")
+            .Should()
+            .Be(value1);
+    }
+
+    [Fact]
+    public void AssertNotEqual_UsingSelector_ShouldFail_WhenObjectsAreEqual()
+    {
+        var value1 = new TestModel { Message = "test message", Value = 1 }; ;
+
+        value1
+            .Invoking(v => v.AssertNotEqual(v => v.Message, "test message"))
             .Should()
             .Throw<XunitException>();
     }
@@ -263,6 +333,29 @@ public class GenericAssertionTests
     }
 
     [Fact]
+    public async Task AssertNotEqualAsync_UsingSelector_ShouldPass_WhenObjectsAreNotEqual()
+    {
+        var value1 = new TestModel { Message = "test message", Value = 1 };
+
+        (await value1
+            .Async()
+            .AssertNotEqualAsync(v => v.Message, "wrong message"))
+            .Should()
+            .Be(value1);
+    }
+
+    [Fact]
+    public async Task AssertNotEqualAsync_UsingSelector_ShouldFail_WhenObjectsAreEqual()
+    {
+        var value1 = new TestModel { Message = "test message", Value = 1 };
+
+        await value1
+            .Invoking(v => v.Async().AssertNotEqualAsync(v => v.Message, "test message"))
+            .Should()
+            .ThrowAsync<XunitException>();
+    }
+
+    [Fact]
     public void AssertEquivalent_ShouldPass_WhenObjectsAreEquivalent()
     {
 
@@ -283,6 +376,29 @@ public class GenericAssertionTests
 
         value1
             .Invoking(v => v.AssertEquivalent(value2))
+            .Should()
+            .Throw<XunitException>();
+    }
+
+    [Fact]
+    public void AssertEquivalent_UsingSelector_ShouldPass_WhenObjectsAreEquivalent()
+    {
+
+        var value1 = new TestModel { Message = "hello", Value = 1 };
+
+        value1
+            .AssertEquivalent(v => v.Message, "hello")
+            .Should()
+            .Be(value1);
+    }
+
+    [Fact]
+    public void AssertEquivalent_UsingSelector_ShouldFail_WhenObjectsAreNotEquivalent()
+    {
+        var value1 = new TestModel { Message = "a message", Value = 1 };
+
+        value1
+            .Invoking(v => v.AssertEquivalent(v => v.Message, "different message"))
             .Should()
             .Throw<XunitException>();
     }
@@ -314,6 +430,30 @@ public class GenericAssertionTests
     }
 
     [Fact]
+    public async Task AssertEquivalentAsync_UsingSelector_ShouldPass_WhenObjectsAreEquivalent()
+    {
+
+        var value1 = new TestModel { Message = "hello", Value = 1 };
+
+        (await value1
+            .Async()
+            .AssertEquivalentAsync(v => v.Message, "hello"))
+            .Should()
+            .Be(value1);
+    }
+
+    [Fact]
+    public async Task AssertEquivalentTask_UsingSelector_ShouldFail_WhenObjectsAreNotEquivalent()
+    {
+        var value1 = new TestModel { Message = "a message", Value = 1 };
+
+        await value1
+            .Invoking(v => v.Async().AssertEquivalentAsync(v => v.Message, "different message"))
+            .Should()
+            .ThrowAsync<XunitException>();
+    }
+
+    [Fact]
     public void AssertNotEquivalent_ShouldPass_WhenObjectsAreNotEquivalent()
     {
         var value1 = new TestModel { Message = "a message", Value = 1 };
@@ -333,6 +473,28 @@ public class GenericAssertionTests
 
         value1
             .Invoking(v => v.AssertNotEquivalent(value2))
+            .Should()
+            .Throw<XunitException>();
+    }
+
+    [Fact]
+    public void AssertNotEquivalent_UsingSelector_ShouldPass_WhenObjectsAreNotEquivalent()
+    {
+        var value1 = new TestModel { Message = "a message", Value = 1 };
+
+        value1
+            .AssertNotEquivalent(v => v.Message, "different message")
+            .Should()
+            .Be(value1);
+    }
+
+    [Fact]
+    public void AssertNotEquivalent_UsingSelector_ShouldFail_WhenObjectsAreEquivalent()
+    {
+        var value1 = new TestModel { Message = "a message", Value = 1 };
+
+        value1
+            .Invoking(v => v.AssertNotEquivalent(v => v.Message, "a message"))
             .Should()
             .Throw<XunitException>();
     }
@@ -363,6 +525,29 @@ public class GenericAssertionTests
     }
 
     [Fact]
+    public async Task AssertNotEquivalentAsync_UsingSelector_ShouldPass_WhenObjectsAreNotEquivalent()
+    {
+        var value1 = new TestModel { Message = "a message", Value = 1 };
+
+        (await value1
+            .Async()
+            .AssertNotEquivalentAsync(v => v.Message, "different message"))
+            .Should()
+            .Be(value1);
+    }
+
+    [Fact]
+    public async Task AssertNotEquivalentAsync_UsingSelector_ShouldFail_WhenObjectsAreEquivalent()
+    {
+        var value1 = new TestModel { Message = "a message", Value = 1 };
+
+        await value1
+            .Invoking(v => v.Async().AssertNotEquivalentAsync(v => v.Message, "a message"))
+            .Should()
+            .ThrowAsync<XunitException>();
+    }
+
+    [Fact]
     public void AssertEqual_ShouldPass_WhenCollectionsAreEqual()
     {
         List<string> value1 = ["hello", "world"];
@@ -384,6 +569,7 @@ public class GenericAssertionTests
             .Should()
             .Throw<XunitException>();
     }
+
 
     [Fact]
     public async Task AssertEqualAsync_ShouldPass_WhenCollectionsAreEqual()
